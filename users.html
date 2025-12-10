@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: html(~{::title}, ~{::content}, ~{::scripts})">
+<head>
+  <title>用户管理 - 药品不良反应监测系统</title>
+</head>
+<body>
+<div th:fragment="content">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-gear text-primary"></i> 用户管理</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+      <i class="bi bi-plus-circle"></i> 添加用户
+    </button>
+  </div>
+
+  <!-- 用户列表 -->
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+          <tr>
+            <th>用户名</th>
+            <th>角色</th>
+            <th>创建时间</th>
+            <th>最后登录</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="user : ${users}">
+            <td th:text="${user.username}">-</td>
+            <td>
+              <span th:if="${user.role == 'ADMIN'}" class="badge bg-danger" th:text="${user.role}">ADMIN</span>
+              <span th:if="${user.role == 'USER'}" class="badge bg-primary" th:text="${user.role}">USER</span>
+            </td>
+            <td th:text="${user.createdTime != null ? #temporals.format(user.createdTime, 'yyyy-MM-dd HH:mm') : '-'}">-</td>
+            <td th:text="${user.lastLoginTime != null ? #temporals.format(user.lastLoginTime, 'yyyy-MM-dd HH:mm') : '从未登录'}">-</td>
+            <td>
+              <span th:if="${user.enabled}" class="badge bg-success">启用</span>
+              <span th:if="${!user.enabled}" class="badge bg-secondary">禁用</span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-1">
+                <i class="bi bi-pencil"></i> 编辑
+              </button>
+              <button class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i> 删除
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加用户模态框 -->
+  <div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">添加新用户</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form th:action="@{/users}" method="post">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="username" class="form-label">用户名</label>
+              <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">密码</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="mb-3">
+              <label for="role" class="form-label">角色</label>
+              <select class="form-select" id="role" name="role" required>
+                <option value="USER">普通用户</option>
+                <option value="ADMIN">管理员</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="enabled" name="enabled" checked>
+                <label class="form-check-label" for="enabled">
+                  启用账户
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="submit" class="btn btn-primary">添加用户</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:fragment="scripts">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 用户管理页面特定脚本
+    });
+  </script>
+</div>
+</body>
+</html>

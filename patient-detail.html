@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>患者详情</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-image: url("/images/login_mm_bg.jpg");}
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .patient-info { background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+    .section { margin-bottom: 30px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .menu a { margin-right: 15px; padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; }
+    .menu a:hover { background-color: #0056b3; }
+  </style>
+</head>
+<body>
+<div class="header">
+  <h1>患者详情</h1>
+  <div>
+    <span>欢迎, <span th:text="${currentUser}"></span></span>
+    <a href="/patients" style="margin-left: 15px;">返回患者列表</a>
+    <a href="/home" style="margin-left: 15px;">返回首页</a>
+    <a href="/logout" style="margin-left: 15px;">退出登录</a>
+  </div>
+</div>
+
+<div class="patient-info">
+  <h3>基本信息</h3>
+  <p><strong>患者编号:</strong> <span th:text="${patient.patientCode}"></span></p>
+  <p><strong>姓名:</strong> <span th:text="${patient.name}"></span></p>
+  <p><strong>性别:</strong> <span th:text="${patient.gender}"></span></p>
+  <p><strong>出生日期:</strong> <span th:text="${patient.birthDate}"></span></p>
+  <p><strong>地区:</strong> <span th:text="${patient.region}"></span></p>
+</div>
+
+<div class="section">
+  <h3>用药记录</h3>
+  <table th:if="${not patient.medicationRecords.empty}">
+    <thead>
+    <tr>
+      <th>用药时间</th>
+      <th>药品名称</th>
+      <th>剂量</th>
+      <th>频率</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="record : ${patient.medicationRecords}">
+      <td th:text="${record.medicationTime}"></td>
+      <td th:text="${record.drug}"></td>
+      <td th:text="${record.dosage}"></td>
+      <td th:text="${record.frequency}"></td>
+    </tr>
+    </tbody>
+  </table>
+  <p th:if="${patient.medicationRecords.empty}">暂无用药记录</p>
+</div>
+
+<div class="section">
+  <h3>不良反应记录</h3>
+  <table th:if="${not patient.adverseReactionRecords.empty}">
+    <thead>
+    <tr>
+      <th>反应时间</th>
+      <th>持续时间</th>
+      <th>发生时机</th>
+      <th>症状</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="record : ${patient.adverseReactionRecords}">
+      <td th:text="${record.reactionTime}"></td>
+      <td th:text="${record.duration}"></td>
+      <td th:text="${record.timing}"></td>
+      <td>
+                <span th:each="symptom, stat : ${record.symptoms}">
+                    <span th:text="${symptom}"></span><span th:if="${not stat.last}">, </span>
+                </span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <p th:if="${patient.adverseReactionRecords.empty}">暂无不良反应记录</p>
+</div>
+</body>
+</html>

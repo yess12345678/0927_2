@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:replace="layout :: html(~{::title}, ~{::content}, ~{::scripts})">
+<head>
+    <title>不良反应记录查询</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-exclamation-circle text-warning"></i> 不良反应记录查询</h2>
+    </div>
+
+    <!-- 筛选条件 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="/query/reaction" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">患者ID</label>
+                    <input type="text" name="patientId" placeholder="请输入患者ID"
+                           th:value="${patientId}" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">反应时机</label>
+                    <input type="text" name="timing" placeholder="请输入反应时机"
+                           th:value="${timing}" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">开始日期</label>
+                    <input type="date" name="timeAfter" th:value="${timeAfter}" class="form-control">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">查询</button>
+                    <a href="/query/reaction" class="btn btn-outline-secondary">重置</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 分页信息 -->
+    <div class="text-center text-muted mb-2">
+        共 <span th:text="${totalItems}">0</span> 条不良反应记录，
+        第 <span th:text="${currentPage + 1}">1</span> 页 / 共 <span th:text="${totalPages}">1</span> 页
+    </div>
+
+    <!-- 每页显示数量选择 -->
+    <div class="mb-3">
+        <label class="form-label">每页显示：</label>
+        <select class="form-select w-auto d-inline" onchange="changePageSize(this.value)">
+            <option value="20" th:selected="${pageSize == 20}">20条</option>
+            <option value="50" th:selected="${pageSize == 50}">50条</option>
+            <option value="100" th:selected="${pageSize == 100}">100条</option>
+        </select>
+    </div>
+
+    <!-- 不良反应记录表格 -->
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="table-light">
+            <tr>
+                <th>序号</th>
+                <th>患者ID</th>
+                <th>患者姓名</th>
+                <th>患者编号</th>
+                <th>反应时间</th>
+                <th>持续时间</th>
+                <th>反应时机</th>
+                <th>症状表现</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="reaction, stat : ${reactionRecords}">
+                <td th:text="${stat.index + 1}"></td>
+                <td th:text="${reaction.patient.id}"></td>
+                <td th:text="${reaction.patient.name}"></td>
+                <td th:text="${reaction.patient.patientCode}"></td>
+                <td th:text="${reaction.reactionTime}"></td>
+                <td th:text="${reaction.duration}"></td>
+                <td th:text="${reaction.timing}"></td>
+                <td>
+                    <span class="badge bg-primary-subtle text-primary me-1"
+                          th:each="symptom : ${reaction.symptoms}" th:text="${symptom}"></span>
+                    <span th:if="${#lists.isEmpty(reaction.symptoms)}" class="text-muted">未记录症状</span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(reactionRecords)}">
+                <td colspan="8" class="text-center text-muted">暂无匹配的不良反应记录</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 分页导航 -->
+    <div th:replace="pagination :: pagination(
+        '/query/reaction',
+        ${currentPage},
+        ${totalPages},
+        ${pageSize},
+        {patientId: ${patientId}, timing: ${timing}, timeAfter: ${timeAfter}}
+    )"></div>
+</div>
+
+<div th:fragment="scripts">
+    <script>
+        // 改变每页显示数量
+        function changePageSize(size) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('size', size);
+            url.searchParams.set('page', '0');
+            window.location.href = url.toString();
+        }
+    </script>
+</div>
+</body>
+</html>

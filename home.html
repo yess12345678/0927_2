@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>数据概览</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <h1 class="mb-4">数据概览</h1>
+
+    <!-- 统计卡片 -->
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-primary stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 th:text="${totalPatients}">0</h2>
+                            <p class="mb-0">患者总数</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-people fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-success stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 th:text="${totalMedications}">0</h2>
+                            <p class="mb-0">用药记录</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-capsule fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-warning stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 th:text="${totalReactions}">0</h2>
+                            <p class="mb-0">不良反应</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-exclamation-triangle fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-info stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 th:text="${patientsWithReactions}">0</h2>
+                            <p class="mb-0">涉及患者</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="bi bi-file-medical fs-1"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快速操作 -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-3">快速操作</h3>
+            <div class="d-grid gap-2 d-md-flex">
+                <a th:href="@{/patients}" class="btn btn-primary me-2">
+                    <i class="bi bi-people me-2"></i>查看患者列表
+                </a>
+                <a th:href="@{/import}" class="btn btn-success me-2">
+                    <i class="bi bi-upload me-2"></i>导入数据
+                </a>
+                <a th:href="@{/analysis}" class="btn btn-info">
+                    <i class="bi bi-bar-chart me-2"></i>查看统计
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: html(~{::title}, ~{::content}, ~{::scripts})">
+<head>
+    <title>药品-不良反应统计 - 药品不良反应监测系统</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-graph-up text-primary"></i> 药品-不良反应关联统计</h2>
+    </div>
+
+    <!-- 筛选条件 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/analysis/drug-reaction}" method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label for="drugName" class="form-label">选择药品</label>
+                    <select class="form-select" id="drugName" name="drugName">
+                        <option value="">全部药品</option>
+                        <option th:each="drug : ${allDrugs}"
+                                th:value="${drug}"
+                                th:text="${drug}"
+                                th:selected="${drug == drugName}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-filter"></i> 筛选
+                    </button>
+                    <a th:href="@{/analysis/drug-reaction}" class="btn btn-outline-secondary ms-2">
+                        <i class="bi bi-arrow-clockwise"></i> 重置
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 性别分布 -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="bi bi-gender-ambiguous"></i> 性别分布</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="genderChart" width="300" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 年龄段分布 -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="bi bi-person-bounding-box"></i> 年龄段分布</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="ageChart" width="300" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 地区分布 -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i class="bi bi-geo-alt"></i> 地区分布</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="regionChart" width="300" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详细统计表格 -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0"><i class="bi bi-table"></i> 药品-不良反应详细统计</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                    <tr>
+                        <th>药品名称</th>
+                        <th>不良反应症状</th>
+                        <th>总病例数</th>
+                        <th>男性病例</th>
+                        <th>女性病例</th>
+                        <th>主要年龄段</th>
+                        <th>主要地区</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="stat : ${drugReactionStats}">
+                        <td th:text="${stat.drug}">-</td>
+                        <td th:text="${stat.symptom}">-</td>
+                        <td>
+                            <span class="badge bg-primary" th:text="${stat.totalCount}">0</span>
+                        </td>
+                        <td th:text="${stat.maleCount}">0</td>
+                        <td th:text="${stat.femaleCount}">0</td>
+                        <td>
+                            <span class="badge bg-info" th:text="${stat.mainAgeGroup}">-</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary" th:text="${stat.mainRegion}">-</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 性别分布图表
+            const genderCtx = document.getElementById('genderChart').getContext('2d');
+            new Chart(genderCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['男性', '女性'],
+                    datasets: [{
+                        data: [65, 35], // 示例数据，实际应从后端获取
+                        backgroundColor: ['#36A2EB', '#FF6384']
+                    }]
+                }
+            });
+
+            // 年龄段分布图表
+            const ageCtx = document.getElementById('ageChart').getContext('2d');
+            new Chart(ageCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['0-18', '19-35', '36-50', '51-65', '65+'],
+                    datasets: [{
+                        label: '病例数',
+                        data: [12, 19, 28, 24, 17],
+                        backgroundColor: '#4BC0C0'
+                    }]
+                }
+            });
+
+            // 地区分布图表
+            const regionCtx = document.getElementById('regionChart').getContext('2d');
+            new Chart(regionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['北京', '上海', '广州', '深圳', '其他'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                        ]
+                    }]
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

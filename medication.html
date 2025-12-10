@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:replace="layout :: html(~{::title}, ~{::content}, ~{::scripts})">
+<head>
+    <title>用药记录查询</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-capsule text-success"></i> 用药记录查询</h2>
+    </div>
+
+    <!-- 筛选条件 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="/query/medication" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">患者ID</label>
+                    <input type="text" name="patientId" placeholder="请输入患者ID"
+                           th:value="${patientId}" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">药品名称</label>
+                    <input type="text" name="drugName" placeholder="请输入药品名称"
+                           th:value="${drugName}" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">开始日期</label>
+                    <input type="date" name="timeAfter" th:value="${timeAfter}" class="form-control">
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">查询</button>
+                    <a href="/query/medication" class="btn btn-outline-secondary">重置</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 分页信息 -->
+    <div class="text-center text-muted mb-2">
+        共 <span th:text="${totalItems}">0</span> 条用药记录，
+        第 <span th:text="${currentPage + 1}">1</span> 页 / 共 <span th:text="${totalPages}">1</span> 页
+    </div>
+
+    <!-- 每页显示数量选择 -->
+    <div class="mb-3">
+        <label class="form-label">每页显示：</label>
+        <select class="form-select w-auto d-inline" onchange="changePageSize(this.value)">
+            <option value="20" th:selected="${pageSize == 20}">20条</option>
+            <option value="50" th:selected="${pageSize == 50}">50条</option>
+            <option value="100" th:selected="${pageSize == 100}">100条</option>
+        </select>
+    </div>
+
+    <!-- 用药记录表格 -->
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead class="table-light">
+            <tr>
+                <th>序号</th>
+                <th>患者ID</th>
+                <th>患者姓名</th>
+                <th>患者编号</th>
+                <th>药品名称</th>
+                <th>用药剂量</th>
+                <th>用药频率</th>
+                <th>用药时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="medication, stat : ${medicationRecords}">
+                <td th:text="${stat.index + 1}"></td>
+                <td th:text="${medication.patient.id}"></td>
+                <td th:text="${medication.patient.name}"></td>
+                <td th:text="${medication.patient.patientCode}"></td>
+                <td th:text="${medication.drug}"></td>
+                <td th:text="${medication.dosage}"></td>
+                <td th:text="${medication.frequency}"></td>
+                <td th:text="${medication.medicationTime}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(medicationRecords)}">
+                <td colspan="8" class="text-center text-muted">暂无匹配的用药记录</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 分页导航 -->
+    <div th:replace="pagination :: pagination(
+        '/query/medication',
+        ${currentPage},
+        ${totalPages},
+        ${pageSize},
+        {patientId: ${patientId}, drugName: ${drugName}, timeAfter: ${timeAfter}}
+    )"></div>
+</div>
+
+<div th:fragment="scripts">
+    <script>
+        // 改变每页显示数量
+        function changePageSize(size) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('size', size);
+            url.searchParams.set('page', '0');
+            window.location.href = url.toString();
+        }
+    </script>
+</div>
+</body>
+</html>

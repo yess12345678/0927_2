@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:replace="layout :: html(~{::title}, ~{::content})">
+<head>
+    <title>数据导入</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-upload text-primary"></i> 数据导入</h2>
+    </div>
+
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-body p-4">
+            <!-- 提示消息 -->
+            <div th:if="${message}" class="alert alert-success mb-4" th:text="${message}"></div>
+            <div th:if="${error}" class="alert alert-danger mb-4" th:text="${error}"></div>
+
+            <form th:action="@{/import}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label">数据类型</label>
+                    <select class="form-select" name="dataType" required>
+                        <option value="">请选择数据类型</option>
+                        <option value="patient">患者数据</option>
+                        <option value="medication">用药记录</option>
+                        <option value="reaction">不良反应记录</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="file" class="form-label">选择文件</label>
+                    <input class="form-control" type="file" id="file" name="file"
+                           accept=".csv,.xlsx,.xls" required>
+                    <div class="form-text">支持 CSV 和 Excel 格式，大小不超过10MB</div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="hasHeader" name="hasHeader" checked>
+                    <label class="form-check-label" for="hasHeader">文件包含表头</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">开始导入</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">导入说明</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">• 支持 CSV、XLSX、XLS 格式文件</li>
+                <li class="list-group-item">• 文件大小不得超过 10MB</li>
+                <li class="list-group-item">• 日期格式需为 YYYY-MM-DD</li>
+                <li class="list-group-item">• 编码格式需为 UTF-8</li>
+            </ul>
+            <a href="#" class="btn btn-outline-primary mt-3">
+                <i class="bi bi-download"></i> 下载导入模板
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

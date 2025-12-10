@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="pagination(baseUrl, currentPage, totalPages, pageSize, params)">
+  <nav aria-label="分页导航">
+    <ul class="pagination justify-content-center">
+      <!-- 首页 -->
+      <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+        <a class="page-link" th:href="@{${baseUrl}(page=0, size=${pageSize}, ~{${params}})}">首页</a>
+      </li>
+
+      <!-- 上一页 -->
+      <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+        <a class="page-link" th:href="@{${baseUrl}(page=${currentPage - 1}, size=${pageSize}, ~{${params}})}">上一页</a>
+      </li>
+
+      <!-- 页码列表（只显示当前页前后2页） -->
+      <th:block th:each="page : ${#numbers.sequence(0, totalPages - 1)}">
+        <li class="page-item" th:if="${page >= currentPage - 2 and page <= currentPage + 2}"
+            th:classappend="${page == currentPage} ? 'active'">
+          <a class="page-link" th:href="@{${baseUrl}(page=${page}, size=${pageSize}, ~{${params}})}"
+             th:text="${page + 1}"></a>
+        </li>
+        <!-- 省略号 -->
+        <li class="page-item disabled" th:if="${page == currentPage + 3 and totalPages > currentPage + 3}">
+          <span class="page-link">...</span>
+        </li>
+      </th:block>
+
+      <!-- 下一页 -->
+      <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+        <a class="page-link" th:href="@{${baseUrl}(page=${currentPage + 1}, size=${pageSize}, ~{${params}})}">下一页</a>
+      </li>
+
+      <!-- 末页 -->
+      <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+        <a class="page-link" th:href="@{${baseUrl}(page=${totalPages - 1}, size=${pageSize}, ~{${params}})}">末页</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- 跳页表单 -->
+  <form th:action="@{${baseUrl}}" method="get" class="text-center mt-2">
+    <input type="hidden" th:each="k,v : ${params}" th:name="${k}" th:value="${v}">
+    <input type="hidden" name="size" th:value="${pageSize}">
+    <div class="input-group w-auto d-inline-flex">
+      <span class="input-group-text">跳至</span>
+      <input type="number" name="page" min="0" th:max="${totalPages - 1}"
+             th:value="${currentPage}" class="form-control text-center" style="width: 80px;">
+      <span class="input-group-text">页</span>
+      <button type="submit" class="btn btn-outline-primary">确定</button>
+    </div>
+  </form>
+</div>
+</body>
+</html>

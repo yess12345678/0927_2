@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: html(~{::title}, ~{::content}, ~{::scripts})">
+<head>
+  <title>数据导入 - 药品不良反应监测系统</title>
+</head>
+<body>
+<div th:fragment="content">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-upload text-primary"></i> 数据导入</h2>
+  </div>
+
+  <div class="row">
+    <!-- 导入说明 -->
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0"><i class="bi bi-info-circle"></i> 导入说明</h5>
+        </div>
+        <div class="card-body">
+          <h6>支持的文件格式：</h6>
+          <ul class="list-unstyled">
+            <li><i class="bi bi-filetype-csv text-success"></i> CSV 文件</li>
+            <li><i class="bi bi-filetype-xlsx text-primary"></i> Excel 文件</li>
+          </ul>
+
+          <h6 class="mt-3">数据要求：</h6>
+          <ul class="small">
+            <li>文件大小不超过 10MB</li>
+            <li>必须包含表头</li>
+            <li>日期格式：YYYY-MM-DD</li>
+            <li>编码格式：UTF-8</li>
+          </ul>
+
+          <div class="mt-3">
+            <a href="#" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-download"></i> 下载模板
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 导入表单 -->
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0"><i class="bi bi-cloud-upload"></i> 上传文件</h5>
+        </div>
+        <div class="card-body">
+          <form th:action="@{/import}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="dataType" class="form-label">数据类型</label>
+              <select class="form-select" id="dataType" name="dataType" required>
+                <option value="">请选择数据类型</option>
+                <option value="patient">患者数据</option>
+                <option value="medication">用药记录</option>
+                <option value="reaction">不良反应记录</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="file" class="form-label">选择文件</label>
+              <input class="form-control" type="file" id="file" name="file" accept=".csv,.xlsx,.xls" required>
+              <div class="form-text">支持 CSV 和 Excel 格式文件</div>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="hasHeader" name="hasHeader" checked>
+                <label class="form-check-label" for="hasHeader">
+                  文件包含表头
+                </label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">导入选项</label>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="importMode" id="append" value="append" checked>
+                  <label class="form-check-label" for="append">追加数据</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="importMode" id="replace" value="replace">
+                  <label class="form-check-label" for="replace">替换数据</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-upload"></i> 开始导入
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- 导入历史 -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="card-title mb-0"><i class="bi bi-clock-history"></i> 最近导入记录</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+              <tr>
+                <th>文件名</th>
+                <th>数据类型</th>
+                <th>导入时间</th>
+                <th>记录数</th>
+                <th>状态</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>patients_2024.csv</td>
+                <td><span class="badge bg-primary">患者数据</span></td>
+                <td>2024-01-15 10:30</td>
+                <td>1,234</td>
+                <td><span class="badge bg-success">成功</span></td>
+              </tr>
+              <tr>
+                <td>medication_records.xlsx</td>
+                <td><span class="badge bg-success">用药记录</span></td>
+                <td>2024-01-14 16:45</td>
+                <td>2,567</td>
+                <td><span class="badge bg-success">成功</span></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:fragment="scripts">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 文件选择预览
+        const fileInput = document.getElementById('file');
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                console.log('选择的文件:', file.name, '大小:', file.size, '类型:', file.type);
+            }
+        });
+    });
+  </script>
+</div>
+</body>
+</html>

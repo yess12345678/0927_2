@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="d-flex">
+    <!-- 侧边栏（Bootstrap 垂直导航） -->
+    <div class="bg-light border-end" style="width: 250px; min-height: calc(100vh - 56px);">
+        <div class="list-group list-group-flush">
+            <h6 class="list-group-item bg-secondary text-white">主菜单</h6>
+
+            <!-- 首页 -->
+            <a href="/home-adminlte" class="list-group-item list-group-item-action">
+                <i class="fa fa-home me-2"></i> 系统首页
+            </a>
+
+            <!-- 数据查询（下拉菜单） -->
+            <div class="list-group-item p-0">
+                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                   data-bs-toggle="collapse" href="#queryMenu">
+                    <span><i class="fa fa-search me-2"></i> 数据查询</span>
+                    <i class="fa fa-chevron-down"></i>
+                </a>
+                <div id="queryMenu" class="collapse ms-3">
+                    <a href="/query/medication/simple" class="list-group-item list-group-item-action">
+                        <i class="fa fa-pills me-2"></i> 用药记录（简单版）
+                    </a>
+                    <a href="/query/reaction/simple" class="list-group-item list-group-item-action">
+                        <i class="fa fa-exclamation-triangle me-2"></i> 不良反应（简单版）
+                    </a>
+                    <a href="/query/medication/adminlte" class="list-group-item list-group-item-action">
+                        <i class="fa fa-pills me-2"></i> 用药记录
+                    </a>
+                    <a href="/query/reaction/adminlte" class="list-group-item list-group-item-action">
+                        <i class="fa fa-exclamation-triangle me-2"></i> 不良反应
+                    </a>
+                </div>
+            </div>
+
+            <!-- 其他菜单 -->
+            <a href="/templates/analysis/drug-reaction" class="list-group-item list-group-item-action">
+                <i class="fa fa-bar-chart me-2"></i> 药品-不良反应统计
+            </a>
+            <a href="/patients" class="list-group-item list-group-item-action">
+                <i class="fa fa-users me-2"></i> 患者管理
+            </a>
+            <a href="/users" class="list-group-item list-group-item-action">
+                <i class="fa fa-user-circle me-2"></i> 用户管理
+            </a>
+            <a href="/import" class="list-group-item list-group-item-action">
+                <i class="fa fa-upload me-2"></i> 数据导入
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
